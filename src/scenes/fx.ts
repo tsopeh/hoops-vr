@@ -1,1 +1,1 @@
-declare module '*.fx';
+declare module "*.fx";

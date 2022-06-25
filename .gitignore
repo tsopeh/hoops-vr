@@ -4,3 +4,5 @@ build
 declaration
 dist
 node_modules
+env
+!env/generate-mock-cert.sh

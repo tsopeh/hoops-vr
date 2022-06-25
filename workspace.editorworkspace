@@ -8,7 +8,9 @@
 	"physicsEngine": "cannon",
 	"pluginsPreferences": {},
 	"https": {
-		"enabled": false
+		"enabled": true,
+		"certPath": "/home/tsopeh/projects/vr_tetris/env/cert.pem",
+		"keyPath": "/home/tsopeh/projects/vr_tetris/env/key.pem"
 	},
 	"ktx2CompressedTextures": {
 		"enabled": false,
