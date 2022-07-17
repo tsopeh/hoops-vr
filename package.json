@@ -7,7 +7,7 @@
     "compile": "tsc -p .",
     "build": "webpack --mode production",
     "watch": "webpack --mode development --watch",
-    "webserver": "http-server -p 5100 -c-1"
+    "webserver": "http-server -p 5101 -c-1"
   },
   "license": "(Apache-2.0)",
   "devDependencies": {

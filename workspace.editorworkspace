@@ -1,7 +1,7 @@
 {
 	"editorVersion": "4.0.1",
 	"lastOpenedScene": "projects/scene/scene.editorproject",
-	"serverPort": 5100,
+	"serverPort": 5101,
 	"generateSceneOnSave": true,
 	"firstLoad": false,
 	"watchProject": true,
