@@ -1,8 +1,3 @@
-.vscode
-.idea
-build
-declaration
-dist
 node_modules
-env
-!env/generate-mock-cert.sh
+dist
+.parcel-cache

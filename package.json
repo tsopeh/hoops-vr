@@ -1,36 +1,20 @@
 {
-  "name": "vr-tetris",
-  "version": "0.0.1",
-  "description": "Generated Template by BabylonJS Editor v4.3.0",
+  "name": "vr_tetris",
+  "version": "1.0.0",
+  "repository": "git@github.com:tsopeh/vr_tetris.git",
+  "license": "MIT",
+  "author": "tsopeh",
   "scripts": {
-    "clean": "rimraf build declaration dist",
-    "compile": "tsc -p .",
-    "build": "webpack --mode production",
-    "watch": "webpack --mode development --watch",
-    "webserver": "http-server -p 5101 -c-1"
-  },
-  "license": "(Apache-2.0)",
-  "devDependencies": {
-    "@types/node": "18.0.0",
-    "@types/webpack": "5.28.0",
-    "babel-loader": "8.2.5",
-    "babylonjs-editor-webpack-progress": "1.0.3",
-    "http-server": "14.1.1",
-    "raw-loader": "4.0.2",
-    "ts-loader": "9.3.1",
-    "typescript": "4.7.4",
-    "webpack": "5.73.0",
-    "webpack-cli": "4.10.0"
+    "start": "concurrently \"yarn parcel src/index.html --https\" \"tsc --noEmit --watch\""
   },
   "dependencies": {
-    "@babylonjs/core": "5.12.1",
-    "@babylonjs/gui": "5.12.1",
-    "@babylonjs/loaders": "5.12.1",
-    "@babylonjs/materials": "5.12.1",
-    "@babylonjs/post-processes": "5.12.1",
-    "@babylonjs/procedural-textures": "5.12.1",
-    "cannon": "0.6.2",
-    "earcut": "2.2.3",
-    "rimraf": "3.0.2"
+    "@babylonjs/core": "^5.15.1",
+    "@babylonjs/loaders": "^5.15.1"
+  },
+  "devDependencies": {
+    "@parcel/transformer-sass": "2.6.2",
+    "concurrently": "^7.2.2",
+    "parcel": "^2.6.2",
+    "typescript": "^4.7.4"
   }
 }
