@@ -1,42 +1,89 @@
-import { Engine, FreeCamera, HemisphericLight, MeshBuilder, Scene, Vector3 } from '@babylonjs/core'
+import {
+  AbstractMesh,
+  ArcRotateCamera,
+  Color3,
+  Engine,
+  Mesh,
+  PointLight,
+  Ray,
+  Scene,
+  StandardMaterial,
+  Vector3,
+} from '@babylonjs/core'
 
-export const createScene = async (engine: Engine, canvas: HTMLCanvasElement): Promise<Scene> => {
+const createComplexScene = async (engine: Engine, canvas: HTMLCanvasElement): Promise<Scene> => {
 
-  // This creates a basic Babylon Scene object (non-mesh)
-  var scene = new Scene(engine)
+  const scene = new Scene(engine)
 
-  // This creates and positions a free camera (non-mesh)
-  var camera = new FreeCamera('camera1', new Vector3(0, 5, -10), scene)
-
-  // This targets the camera to scene origin
-  camera.setTarget(Vector3.Zero())
-
-  // This attaches the camera to the canvas
+  const light = new PointLight('Omni', new Vector3(0, 100, 100), scene)
+  const camera = new ArcRotateCamera('Camera', 0, 0.8, 50, Vector3.Zero(), scene)
   camera.attachControl(canvas, true)
 
-  // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
-  var light = new HemisphericLight('light', new Vector3(0, 1, 0), scene)
+  const ground = Mesh.CreateGround('ground', 500, 500, 10, scene)
 
-  // Default intensity is 1. Let's dim the light a small amount
-  light.intensity = 0.7
+  const box = Mesh.CreateBox('box', 4.0, scene)
+  box.position.y = 2
+  box.scaling.z = 2
+  const matBox = new StandardMaterial('matBox', scene)
+  matBox.diffuseColor = new Color3(1.0, 0.1, 0.1)
+  box.material = matBox
+  box.isPickable = true
 
-  // Our built-in 'sphere' shape.
-  var sphere = MeshBuilder.CreateSphere('sphere', {diameter: 2, segments: 32}, scene)
+  const box2 = Mesh.CreateBox('box2', 8.0, scene)
+  box2.position = new Vector3(-20, 4, 0)
+  const matBox2 = new StandardMaterial('matBox2', scene)
+  matBox2.diffuseColor = new Color3(0.1, 0.1, 1)
+  box2.material = matBox2
 
-  // Move the sphere upward 1/2 its height
-  sphere.position.y = 1
-
-  const environment = scene.createDefaultEnvironment()
-
-  if (environment == null || environment.ground == null) {
-    throw new Error('Failed to create the default environment or its ground.')
-  }
+  //  const environment = scene.createDefaultEnvironment();
 
   // XR
   const xrHelper = await scene.createDefaultXRExperienceAsync({
-    floorMeshes: [environment.ground],
+    floorMeshes: [ground],
+  })
+
+  const tmpRay = new Ray(new Vector3(), new Vector3())
+  tmpRay.length = 3
+  let tmpMesh: AbstractMesh | undefined
+
+//controller input
+
+  xrHelper.input.onControllerAddedObservable.add((controller) => {
+    controller.onMotionControllerInitObservable.add((motionController) => {
+      if (motionController.handness === 'left') {
+        const xr_ids = motionController.getComponentIds()
+        let triggerComponent = motionController.getComponent(xr_ids[0])//xr-standard-trigger
+        triggerComponent.onButtonStateChangedObservable.add(() => {
+          if (triggerComponent.value > 0.5) {
+            controller.getWorldPointerRayToRef(tmpRay, true)
+
+            const hit = scene.pickWithRay(tmpRay)
+
+            if (hit != null && hit.pickedMesh != undefined) {
+              tmpMesh = hit.pickedMesh
+              console.log('name:' + hit.pickedMesh.name)
+              //tmpMesh.parent= controller.grip;//tmpMesh is set on inappropriate position.
+              tmpMesh.setParent(motionController.rootMesh)
+            }
+
+            //released button
+          } else if (triggerComponent.value < 0.5) {
+            if (tmpMesh != undefined) {
+              // tmpMesh.parent= null;
+              tmpMesh.setParent(null)
+            }
+
+          }
+        })
+
+      }
+
+    })
+
   })
 
   return scene
 
 }
+
+export const createScene = createComplexScene
