@@ -12,9 +12,13 @@
   },
   "dependencies": {
     "@babylonjs/core": "^5.17.1",
-    "@babylonjs/loaders": "^5.17.1"
+    "@babylonjs/loaders": "^5.17.1",
+    "@babylonjs/materials": "^5.17.1",
+    "cannon": "^0.6.2",
+    "oimo": "^1.0.9"
   },
   "devDependencies": {
+    "@types/cannon": "^0.1.8",
     "concurrently": "^7.3.0",
     "sass": "^1.54.0",
     "typescript": "^4.7.4",

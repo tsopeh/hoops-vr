@@ -16,6 +16,13 @@
   dependencies:
     tslib "^2.4.0"
 
+"@babylonjs/materials@^5.17.1":
+  version "5.17.1"
+  resolved "https://registry.yarnpkg.com/@babylonjs/materials/-/materials-5.17.1.tgz#a72b2839dd3e1be2898f6ba73edd4211834f1275"
+  integrity sha512-dF/01wOasQ9DdfpTYT5hzHIQYMxwQzZblGVk0H735Dy+9Kt82XicBzKlsPX+30lv0NCpUODePa6pTvrQsZwaeg==
+  dependencies:
+    tslib "^2.4.0"
+
 "@octokit/auth-token@^3.0.0":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@octokit/auth-token/-/auth-token-3.0.0.tgz#6f22c5fc56445c496628488ba6810131558fa4a9"
@@ -117,6 +124,11 @@
   dependencies:
     "@octokit/openapi-types" "^12.11.0"
 
+"@types/cannon@^0.1.8":
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/@types/cannon/-/cannon-0.1.8.tgz#fce4bc22a245d644747707c51cb3d3025d3f6163"
+  integrity sha512-aabgPL9ho1Qov3mMnBJCTG+vTWhFrhRi/5INwsZCPhf3BwabRWz53ryffCDzRSlV4T0f4eQS0OQo5Y/RCZsngQ==
+
 ansi-regex@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-5.0.1.tgz#082cb2c89c9fe8659a311a53bd6a4dc5301db304"
@@ -160,6 +172,11 @@ braces@~3.0.2:
   integrity sha512-b8um+L1RzM3WDSzvhm6gIz1yfTbBt6YTlcEKAvsmqCZZFw46z626lVj9j1yEPW33H5H+lBQpZMP1k8l+78Ha0A==
   dependencies:
     fill-range "^7.0.1"
+
+cannon@^0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/cannon/-/cannon-0.6.2.tgz#1e7bc72dd5841982f3c104c2bc578bfa4fb1c572"
+  integrity sha512-n/7wWSXr8KOSvjad2x0fJHgpMepKjOKi+NdSnjfYyijoDBZnp4JQKgPcpv28jlXoWM+N9zVYU09J0A6Qxx+Y7w==
 
 chalk@^4.1.0:
   version "4.1.2"
@@ -491,6 +508,11 @@ normalize-path@^3.0.0, normalize-path@~3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/normalize-path/-/normalize-path-3.0.0.tgz#0dcd69ff23a1c9b11fd0978316644a0388216a65"
   integrity sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==
+
+oimo@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/oimo/-/oimo-1.0.9.tgz#0b592e361c799103fdb04fb3be1264245ef6884b"
+  integrity sha512-eh1eRT3HkKWRjG155pXnzS9JANeeUVZ/bfck5lUPAq23G/lIvkRHn57rwC1unfou+X0wXIF0YmjpKcjDIy3o8g==
 
 once@^1.4.0:
   version "1.4.0"
