@@ -10,18 +10,18 @@ export enum PhysicsEngine {
   Ammo = 'ammo'
 }
 
-export const getPhysicsPlugin = async (plugin: PhysicsEngine): Promise<IPhysicsEnginePlugin> => {
+export const getPhysicsPlugin = async (plugin: PhysicsEngine, iterations?: number): Promise<IPhysicsEnginePlugin> => {
   switch (plugin) {
     case PhysicsEngine.CANNON:
       window.CANNON = CANNON
-      return new CannonJSPlugin(undefined, 5)
+      return new CannonJSPlugin(undefined, iterations)
     case PhysicsEngine.OIMO:
       // @ts-ignore
       window.OIMO = OIMO
-      return new OimoJSPlugin(undefined, 10)
+      return new OimoJSPlugin(undefined, iterations)
     case PhysicsEngine.Ammo:
       // @ts-ignore
       await Ammo()
-      return new AmmoJSPlugin()
+      return new AmmoJSPlugin(undefined, iterations)
   }
 }

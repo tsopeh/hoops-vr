@@ -10,7 +10,7 @@ const createScene = false
   ? createGrabScene
   : createShootingScene
 
-const scenePromise = createScene({engine, physicsPlugin: await getPhysicsPlugin(PhysicsEngine.Ammo), canvas})
+const scenePromise = createScene({engine, physicsPlugin: await getPhysicsPlugin(PhysicsEngine.CANNON), canvas})
 
 engine.runRenderLoop(function () {
   scenePromise.then((scene) => {

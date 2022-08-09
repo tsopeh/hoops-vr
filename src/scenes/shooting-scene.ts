@@ -1,13 +1,24 @@
 import {
-  AbstractMesh, Animation, BezierCurveEase,
+  AbstractMesh,
+  Animation,
+  BezierCurveEase,
   Color3,
   FreeCamera,
   HemisphericLight,
-  MeshBuilder, Observer,
-  PhysicsImpostor, PhysicsJoint, PointerEventTypes, Quaternion, Ray,
-  Scene, StandardMaterial, Texture,
-  Vector3, WebXRFeatureName,
+  MeshBuilder,
+  Observer,
+  PhysicsImpostor,
+  PhysicsJoint,
+  PointerEventTypes,
+  Quaternion,
+  Ray,
+  Scene,
+  StandardMaterial,
+  Texture,
+  Vector3,
+  WebXRFeatureName,
 } from '@babylonjs/core'
+import '@babylonjs/loaders' // Needed for loading the proper controller model.
 import { GridMaterial } from '@babylonjs/materials'
 import { SceneParams } from '../scene'
 
