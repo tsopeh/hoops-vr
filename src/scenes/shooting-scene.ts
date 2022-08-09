@@ -15,10 +15,10 @@ import {
   Scene,
   StandardMaterial,
   Texture,
+  Tools,
   Vector3,
   WebXRFeatureName,
 } from '@babylonjs/core'
-import '@babylonjs/loaders' // Needed for loading the proper controller model.
 import { GridMaterial } from '@babylonjs/materials'
 import { SceneParams } from '../scene'
 
@@ -50,6 +50,10 @@ export const createShootingScene = async (params: SceneParams): Promise<Scene> =
   }, scene)
   ground.checkCollisions = true
   ground.material = new GridMaterial('mat', scene)
+
+  const torus = MeshBuilder.CreateTorus('torus', {thickness: 0.2, diameter: 5, tessellation: 32}, scene)
+  torus.position = new Vector3(0, 10, 90)
+  torus.rotation = new Vector3(Tools.ToRadians(90), 0, 0)
 
   // towers
   const towerMeshes: Array<AbstractMesh> = []

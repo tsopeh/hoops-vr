@@ -1,14 +1,16 @@
 import { Engine } from '@babylonjs/core'
-import { createGrabScene } from './scenes/grab-scene'
-import { createShootingScene } from './scenes/shooting-scene'
+import '@babylonjs/loaders' // Needed for loading the proper controller model.
+import { createPrecisionScene } from './scenes/precision'
 import { getPhysicsPlugin, PhysicsEngine } from './setup-physics-plugin'
 
 const canvas = document.getElementById('renderCanvas') as HTMLCanvasElement // Get the canvas element
 const engine = new Engine(canvas, true)
 
-const createScene = false
-  ? createGrabScene
-  : createShootingScene
+// const createScene = false
+//   ? createGrabScene
+//   : createShootingScene
+
+const createScene = createPrecisionScene
 
 const scenePromise = createScene({engine, physicsPlugin: await getPhysicsPlugin(PhysicsEngine.CANNON), canvas})
 
