@@ -1,15 +1,14 @@
 import {
+  AbstractMesh,
   ActionManager,
   Animation,
   ArcRotateCamera,
   Color3,
   ExecuteCodeAction,
-  HardwareScalingOptimization,
+  IAnimationKey,
   MeshBuilder,
   PhysicsImpostor,
   Scene,
-  SceneOptimizer,
-  SceneOptimizerOptions,
   StandardMaterial,
   Vector3,
 } from '@babylonjs/core'
@@ -23,7 +22,6 @@ export const createPrecisionScene = async (params: SceneParams): Promise<Scene> 
   scene.collisionsEnabled = true
   const gravityVector = new Vector3(0, -9.81, 0)
   scene.enablePhysics(gravityVector, physicsPlugin)
-  const t = 0
 
   const target_point = {
     x: 0,
@@ -57,23 +55,24 @@ export const createPrecisionScene = async (params: SceneParams): Promise<Scene> 
 
   const frameRate = 15
   const xSlide = new Animation('xSlide', 'position.x', frameRate, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CYCLE)
-  const keyFramesP = []
-  keyFramesP.push({
-    frame: 0,
-    value: 2,
-  })
-  keyFramesP.push({
-    frame: frameRate,
-    value: -2,
-  })
-  keyFramesP.push({
-    frame: 2 * frameRate,
-    value: 2,
-  })
+  const keyFramesP: Array<IAnimationKey> = [
+    {
+      frame: 0,
+      value: 2,
+    },
+    {
+      frame: frameRate,
+      value: -2,
+    },
+    {
+      frame: 2 * frameRate,
+      value: 2,
+    },
+  ]
   xSlide.setKeys(keyFramesP)
   scene.beginDirectAnimation(person, [xSlide], 0, 2 * frameRate, true)
 
-  const balls = []
+  const balls: Array<AbstractMesh> = []
   setInterval(shoot, 250)
 
   function shoot () {
@@ -91,31 +90,32 @@ export const createPrecisionScene = async (params: SceneParams): Promise<Scene> 
       const force_scale = get_2dnorm(direction)
       const force = 3.2
 
-      const sphere_imposor = new PhysicsImpostor(
+      const sphere_impostor = new PhysicsImpostor(
         sphere, PhysicsImpostor.SphereImpostor, {mass: 1, restitution: 0.7}, scene,
       )
 
-      sphere_imposor.applyImpulse(
+      sphere_impostor.applyImpulse(
         new Vector3(
           force / force_scale * direction.x,
           force * 2.3,
-          force / force_scale * direction.z),
+          force / force_scale * direction.z,
+        ),
         sphere.getAbsolutePosition(),
       )
-      sphere.physicsImpostor = sphere_imposor
+      sphere.physicsImpostor = sphere_impostor
 
       sphere.actionManager = new ActionManager(scene)
       sphere.actionManager.registerAction(new ExecuteCodeAction(
         {trigger: ActionManager.OnIntersectionExitTrigger, parameter: sensor1},
-        function (evt) {
-          evt.source.passthrough = 1
+        (event) => {
+          event.source.passthrough = 1
         },
       ))
       sphere.actionManager.registerAction(new ExecuteCodeAction(
         {trigger: ActionManager.OnIntersectionExitTrigger, parameter: sensor2},
-        function (evt) {
-          if (evt.source.passthrough == 1) {
-            evt.source.material = greenMat
+        (event) => {
+          if (event.source.passthrough == 1) {
+            event.source.material = greenMat
           }
         },
       ))
@@ -151,36 +151,21 @@ export const createPrecisionScene = async (params: SceneParams): Promise<Scene> 
   bar3.physicsImpostor = new PhysicsImpostor(bar3,
     PhysicsImpostor.BoxImpostor, {mass: 0, restitution: 0.7}, scene)
 
-  const ground = MeshBuilder.CreateGround('ground1',
-    {height: 10, width: 10}, scene)
+  const ground = MeshBuilder.CreateGround('ground1', {height: 10, width: 10}, scene)
   ground.position.y = 0
-  ground.physicsImpostor = new PhysicsImpostor(ground,
-    PhysicsImpostor.BoxImpostor, {mass: 0, restitution: 0.7}, scene)
+  ground.physicsImpostor = new PhysicsImpostor(ground, PhysicsImpostor.BoxImpostor, {mass: 0, restitution: 0.7}, scene)
 
-  // Parameters: alpha, beta, radius, target position, scene
   const camera = new ArcRotateCamera('Camera', 320 / 180 * Math.PI, 70 / 180 * Math.PI, 15,
     new Vector3(0, 0, 0), scene)
-  // Positions the camera overwriting alpha, beta, radius
-  // This attaches the camera to the canvas
   camera.attachControl(canvas, true)
 
   scene.activeCamera = camera
-  //scene.createDefaultCamera(true, true, true);
   scene.createDefaultLight()
   scene.createDefaultEnvironment({createGround: false})
-
-  const options = new SceneOptimizerOptions()
-  options.addOptimization(new HardwareScalingOptimization(0, 1))
-  // Optimizer
-  const optimizer = new SceneOptimizer(scene, options)
 
   return scene
 }
 
 function get_2dnorm (direction: Vector3) {
   return Math.sqrt(direction.x ** 2 + direction.z ** 2)
-}
-
-function get_3dnorm (direction: Vector3) {
-  return Math.sqrt(direction.x ** 2 + direction.z ** 2 + direction.y ** 2)
 }
