@@ -21,7 +21,7 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
   const gravityVector = new Vector3(0, -9.8, 0)
   scene.enablePhysics(gravityVector, physicsPlugin)
 
-  const camera = new FreeCamera('camera1', new Vector3(0, 10, 80), scene)
+  const camera = new FreeCamera('camera1', new Vector3(0, 2, -450), scene)
   camera.setTarget(new Vector3(0, 10, 400))
   camera.attachControl(canvas, true)
 
@@ -39,9 +39,17 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
   }, scene)
   ground.material = new GridMaterial('mat', scene)
 
-  const torus = MeshBuilder.CreateTorus('torus', {thickness: 0.2, diameter: 5, tessellation: 32}, scene)
-  torus.position = new Vector3(0, 10, 90)
+  const torus = MeshBuilder.CreateTorus('torus', {thickness: 0.5, diameter: 10, tessellation: 32}, scene)
+  torus.position = new Vector3(0, 10, -400)
   torus.rotation = new Vector3(Tools.ToRadians(90), 0, 0)
+  torus.physicsImpostor = new PhysicsImpostor(
+    torus,
+    PhysicsImpostor.BoxImpostor,
+    {
+      mass: 0,
+      restitution: 1,
+    },
+  )
 
   // TODO: Add a fixed place from where one can shoot the hoops.
 

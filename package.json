@@ -11,18 +11,22 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@babylonjs/core": "^5.17.1",
-    "@babylonjs/loaders": "^5.17.1",
-    "@babylonjs/materials": "^5.17.1",
+    "@babylonjs/core": "^5.18.0",
+    "@babylonjs/gui": "^5.18.0",
+    "@babylonjs/gui-editor": "^5.18.0",
+    "@babylonjs/inspector": "^5.18.0",
+    "@babylonjs/loaders": "^5.18.0",
+    "@babylonjs/materials": "^5.18.0",
+    "@babylonjs/serializers": "^5.18.0",
     "cannon": "^0.6.2",
     "oimo": "^1.0.9"
   },
   "devDependencies": {
     "@types/cannon": "^0.1.8",
     "concurrently": "^7.3.0",
-    "sass": "^1.54.0",
+    "sass": "^1.54.4",
     "typescript": "^4.7.4",
-    "vite": "^3.0.4",
+    "vite": "^3.0.5",
     "vite-plugin-mkcert": "^1.9.0"
   }
 }
