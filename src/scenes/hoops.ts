@@ -168,32 +168,25 @@ const createHoop = (params: CreateHoopParams): Sensors => {
   const torus = MeshBuilder.CreateTorus(`torus-${id}`, { diameter, thickness, tessellation }, scene)
   torus.position = position
   torus.rotation = rotation
-  // TODO: When this gets uncommented it messes up the sensors rotation.
-  // torus.physicsImpostor = new PhysicsImpostor(
-  //   torus,
-  //   PhysicsImpostor.BoxImpostor,
-  //   {
-  //     mass: 0,
-  //     restitution: 1,
-  //   },
-  // )
-
-  const sensor1 = MeshBuilder.CreateCylinder(`sensor-1-${id}`, { diameter, tessellation, height: 1 }, scene)
-  sensor1.position = new Vector3(
-    position.x,
-    position.y,
-    position.z - 0.5,
+  torus.physicsImpostor = new PhysicsImpostor(
+    torus,
+    PhysicsImpostor.BoxImpostor,
+    {
+      mass: 0,
+      restitution: 1,
+    },
   )
-  sensor1.rotation = rotation
+
+  const sensorDepth = 1
+
+  const sensor1 = MeshBuilder.CreateCylinder(`sensor-1-${id}`, { diameter, tessellation, height: sensorDepth }, scene)
+  sensor1.parent = torus
+  sensor1.position.y -= (sensorDepth / 2)
   sensor1.material = sensor1Material
 
-  const sensor2 = MeshBuilder.CreateCylinder(`sensor-2-${id}`, { diameter, tessellation, height: 1 }, scene)
-  sensor2.position = new Vector3(
-    position.x,
-    position.y,
-    position.z + 0.5,
-  )
-  sensor2.rotation = rotation
+  const sensor2 = MeshBuilder.CreateCylinder(`sensor-2-${id}`, { diameter, tessellation, height: sensorDepth }, scene)
+  sensor2.parent = torus
+  sensor2.position.y += (sensorDepth / 2)
   sensor2.material = sensor2Material
 
   return {
