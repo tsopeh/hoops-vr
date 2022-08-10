@@ -14,7 +14,7 @@ import {
 } from '@babylonjs/core'
 import { SceneParams } from '../scene'
 
-export const createPrecisionScene = async (params: SceneParams): Promise<Scene> => {
+export const createBasketballScene = async (params: SceneParams): Promise<Scene> => {
 
   const {engine, physicsPlugin, canvas} = params
 
