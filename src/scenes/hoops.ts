@@ -1,9 +1,11 @@
 import {
+  AbstractMesh,
   ActionManager,
   Color3,
   ExecuteCodeAction,
   FreeCamera,
   HemisphericLight,
+  Material,
   MeshBuilder,
   PhysicsImpostor,
   PointerEventTypes,
@@ -42,34 +44,6 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
   }, scene)
   ground.material = new GridMaterial('mat', scene)
 
-  const torus = MeshBuilder.CreateTorus('torus', { thickness: 0.5, diameter: 10, tessellation: 32 }, scene)
-  torus.position = new Vector3(0, 10, -400)
-  torus.rotation = new Vector3(Tools.ToRadians(90), 0, 0)
-  // torus.physicsImpostor = new PhysicsImpostor(
-  //   torus,
-  //   PhysicsImpostor.BoxImpostor,
-  //   {
-  //     mass: 0,
-  //     restitution: 1,
-  //   },
-  // )
-
-  const sensor2 = MeshBuilder.CreateCylinder('sensor2', { diameter: 10, tessellation: 32, height: 1 }, scene)
-  sensor2.position = new Vector3(0, 10, -399)
-  sensor2.rotation = new Vector3(Tools.ToRadians(90), 0, 0)
-  const sensor2Mat = new StandardMaterial('sensor2Mat', scene)
-  sensor2Mat.diffuseColor = new Color3(0, 1, 0)
-  sensor2.material = sensor2Mat
-  sensor2.visibility = 0.2
-
-  const sensor1 = MeshBuilder.CreateCylinder('sensor1', { diameter: 10, tessellation: 32, height: 1 }, scene)
-  sensor1.position = new Vector3(0, 10, -401)
-  sensor1.rotation = new Vector3(Tools.ToRadians(90), 0, 0)
-  const sensor1Mat = new StandardMaterial('sensor2Mat', scene)
-  sensor1Mat.diffuseColor = new Color3(0, 0, 1)
-  sensor1.material = sensor1Mat
-  sensor1.visibility = 0.2
-
   // TODO: Add a fixed place from where one can shoot the hoops.
 
   const xr = await scene.createDefaultXRExperienceAsync({
@@ -85,6 +59,34 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
     },
     enableHeadsetImpostor: true,
   })
+
+  const sensor1Mat = (() => {
+    const mat = new StandardMaterial('sensor1Mat', scene)
+    mat.diffuseColor = new Color3(0, 1, 0)
+    mat.alpha = 0.2
+    return mat
+  })()
+
+  const sensor2Mat = (() => {
+    const mat = new StandardMaterial('sensor2Mat', scene)
+    mat.diffuseColor = new Color3(0, 0, 1)
+    mat.alpha = 0.2
+    return mat
+  })()
+
+  const sensors1 = createHoop({
+    id: 'hoop1',
+    diameter: 10,
+    thickness: 1,
+    tessellation: 32,
+    position: new Vector3(0, 10, -400),
+    rotation: new Vector3(Tools.ToRadians(90), 0, 0),
+    scene: scene,
+    sensor1Material: sensor1Mat,
+    sensor2Material: sensor2Mat,
+  })
+
+  const activeHoops: Array<Sensors> = [sensors1]
 
   scene.onPointerObservable.add((event) => {
     if (event.type === PointerEventTypes.POINTERPICK) {
@@ -110,24 +112,28 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
         )
 
         bullet.actionManager = new ActionManager(scene)
-        bullet.actionManager.registerAction(new ExecuteCodeAction(
-          { trigger: ActionManager.OnIntersectionExitTrigger, parameter: sensor1 },
-          (event) => {
-            event.source.passthrough = 1
-          },
-        ))
 
-        const bulletMat = new StandardMaterial('bulletMat', scene)
-        bulletMat.diffuseColor = new Color3(1, 0, 0)
+        activeHoops.forEach(({ sensor1, sensor2 }) => {
 
-        bullet.actionManager.registerAction(new ExecuteCodeAction(
-          { trigger: ActionManager.OnIntersectionExitTrigger, parameter: sensor2 },
-          (event) => {
-            if (event.source.passthrough == 1) {
-              event.source.material = bulletMat
-            }
-          },
-        ))
+          bullet!.actionManager!.registerAction(new ExecuteCodeAction(
+            { trigger: ActionManager.OnIntersectionExitTrigger, parameter: sensor1 },
+            (event) => {
+              event.source.passthrough = 1
+            },
+          ))
+
+          const bulletMat = new StandardMaterial('bulletMat', scene)
+          bulletMat.diffuseColor = new Color3(1, 0, 0)
+
+          bullet!.actionManager!.registerAction(new ExecuteCodeAction(
+            { trigger: ActionManager.OnIntersectionExitTrigger, parameter: sensor2 },
+            (event) => {
+              if (event.source.passthrough == 1) {
+                event.source.material = bulletMat
+              }
+            },
+          ))
+        })
 
         bullet.physicsImpostor.setLinearVelocity(ray.direction.scale(400))
       }
@@ -135,5 +141,64 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
   })
 
   return scene
+
+}
+
+interface CreateHoopParams {
+  id: string
+  diameter: number
+  tessellation: number
+  thickness: number
+  scene: Scene
+  position: Vector3
+  rotation: Vector3
+  sensor1Material: Material
+  sensor2Material: Material
+}
+
+interface Sensors {
+  sensor1: AbstractMesh
+  sensor2: AbstractMesh
+}
+
+const createHoop = (params: CreateHoopParams): Sensors => {
+
+  const { id, diameter, thickness, tessellation, scene, position, rotation, sensor1Material, sensor2Material } = params
+
+  const torus = MeshBuilder.CreateTorus(`torus-${id}`, { diameter, thickness, tessellation }, scene)
+  torus.position = position
+  torus.rotation = rotation
+  // TODO: When this gets uncommented it messes up the sensors rotation.
+  // torus.physicsImpostor = new PhysicsImpostor(
+  //   torus,
+  //   PhysicsImpostor.BoxImpostor,
+  //   {
+  //     mass: 0,
+  //     restitution: 1,
+  //   },
+  // )
+
+  const sensor1 = MeshBuilder.CreateCylinder(`sensor-1-${id}`, { diameter, tessellation, height: 1 }, scene)
+  sensor1.position = new Vector3(
+    position.x,
+    position.y,
+    position.z - 0.5,
+  )
+  sensor1.rotation = rotation
+  sensor1.material = sensor1Material
+
+  const sensor2 = MeshBuilder.CreateCylinder(`sensor-2-${id}`, { diameter, tessellation, height: 1 }, scene)
+  sensor2.position = new Vector3(
+    position.x,
+    position.y,
+    position.z + 0.5,
+  )
+  sensor2.rotation = rotation
+  sensor2.material = sensor2Material
+
+  return {
+    sensor1,
+    sensor2,
+  }
 
 }
