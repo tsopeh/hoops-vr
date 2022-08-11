@@ -16,6 +16,8 @@ import {
   WebXRFeatureName,
 } from '@babylonjs/core'
 import { GridMaterial } from '@babylonjs/materials'
+import { BetterMeshWriter } from '../better-mesh-writer'
+
 import { SceneParams } from '../scene'
 
 export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
@@ -58,6 +60,14 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
       impostorType: PhysicsImpostor.BoxImpostor,
     },
     enableHeadsetImpostor: true,
+  })
+
+  const score = new BetterMeshWriter({
+    scene,
+    value: 0,
+    scale: 0.5,
+    position: new Vector3(0, 10, -400),
+    rotation: new Vector3(Tools.ToRadians(-90), 0, 0),
   })
 
   const sensor1Mat = (() => {
@@ -122,14 +132,19 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
             },
           ))
 
-          const bulletMat = new StandardMaterial('bulletMat', scene)
-          bulletMat.diffuseColor = new Color3(1, 0, 0)
-
           bullet!.actionManager!.registerAction(new ExecuteCodeAction(
             { trigger: ActionManager.OnIntersectionExitTrigger, parameter: sensor2 },
             (event) => {
               if (event.source.passthrough == 1) {
+                const bulletMat = new StandardMaterial('bulletMat', scene)
+                bulletMat.diffuseColor = new Color3(1, 0, 0)
                 event.source.material = bulletMat
+
+                score.update({
+                  value: score.value + 1,
+                  scale: score.scale + 0.1,
+                })
+
               }
             },
           ))
@@ -168,14 +183,14 @@ const createHoop = (params: CreateHoopParams): Sensors => {
   const torus = MeshBuilder.CreateTorus(`torus-${id}`, { diameter, thickness, tessellation }, scene)
   torus.position = position
   torus.rotation = rotation
-  torus.physicsImpostor = new PhysicsImpostor(
-    torus,
-    PhysicsImpostor.BoxImpostor,
-    {
-      mass: 0,
-      restitution: 1,
-    },
-  )
+  // torus.physicsImpostor = new PhysicsImpostor(
+  //   torus,
+  //   PhysicsImpostor.BoxImpostor,
+  //   {
+  //     mass: 0,
+  //     restitution: 1,
+  //   },
+  // )
 
   const sensorDepth = 1
 

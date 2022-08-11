@@ -1,9 +1,9 @@
 import { Engine } from '@babylonjs/core'
-import '@babylonjs/inspector'
 import '@babylonjs/gui'
+import '@babylonjs/gui-editor'
+import '@babylonjs/inspector'
 import '@babylonjs/loaders'
 import '@babylonjs/serializers'
-import '@babylonjs/gui-editor'
 import { createBasketballScene } from './scenes/basketball'
 import { createGrabScene } from './scenes/grab-scene'
 import { createHoopsScene } from './scenes/hoops' // Needed for loading the proper controller model.
