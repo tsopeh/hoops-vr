@@ -6,7 +6,6 @@ import {
   PhysicsImpostor,
   PointerEventTypes,
   Scene,
-  StandardMaterial,
   Tools,
   Vector3,
   WebXRFeatureName,
@@ -79,13 +78,24 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
           position: new Vector3(0, 10, -350),
           rotation: new Vector3(Tools.ToRadians(90), 0, 0),
         },
-      }
+      },
     ],
     score: {
-      value: 0,
       scale: 0.5,
       position: new Vector3(0, 10, -400),
       rotation: new Vector3(Tools.ToRadians(-90), 0, 0),
+      scoreColors: {
+        diffuse: '#F0F0F0',
+        specular: '#000000',
+        ambient: '#F0F0F0',
+        emissive: '#e7980a',
+      },
+      winColors: {
+        diffuse: '#F0F0F0',
+        specular: '#000000',
+        ambient: '#F0F0F0',
+        emissive: '#1b94de',
+      },
     },
   })
 

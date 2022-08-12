@@ -1,16 +1,20 @@
 import { AbstractMesh, ActionManager, Color3, ExecuteCodeAction, Scene, StandardMaterial } from '@babylonjs/core'
-import { BetterMeshWriter, BetterMeshWriterParams } from '../better-mesh-writer'
+import { BetterMeshWriter, BetterMeshWriterParams, WriterColors } from '../better-mesh-writer'
 import { CreatedHoop, createHoop, CreateHoopParams } from './hoop'
 
 export interface CourseParams {
   scene: Scene
   targets: ReadonlyArray<Target>
-  score: Omit<BetterMeshWriterParams, 'scene'>
+  score: CourseScore
 }
 
 export interface Target {
   hoop: Omit<CreateHoopParams, 'scene' | 'sensor1Material' | 'sensor2Material'>
 }
+
+export type CourseScore =
+  Omit<BetterMeshWriterParams, 'scene' | 'value' | 'colors'>
+  & { scoreColors: WriterColors, winColors: WriterColors }
 
 export class Course {
 
@@ -20,8 +24,11 @@ export class Course {
   private activeHoop!: CreatedHoop
   private currentTargetIndex: number = 0
   private readonly bulletMaterial: StandardMaterial
+  private readonly scoreWinColors: WriterColors
 
   private readonly sensorMaterials: ReadonlyArray<StandardMaterial>
+
+  private scoreValue: number = 0
 
   public constructor (params: CourseParams) {
     this.scene = params.scene
@@ -43,7 +50,15 @@ export class Course {
     ]
     this.bulletMaterial = new StandardMaterial('bulletMaterial', this.scene)
     this.bulletMaterial.diffuseColor = new Color3(1, 0, 0)
-    this.score = new BetterMeshWriter({ ...params.score, scene: this.scene })
+    this.score = new BetterMeshWriter({
+      scene: this.scene,
+      value: this.scoreValue.toString(),
+      scale: params.score.scale,
+      position: params.score.position,
+      rotation: params.score.rotation,
+      colors: params.score.scoreColors,
+    })
+    this.scoreWinColors = params.score.winColors
     this.renderTarget(this.targets[this.currentTargetIndex])
   }
 
@@ -83,15 +98,18 @@ export class Course {
   private onTargetHit (bullet: AbstractMesh): void {
     bullet.material = this.bulletMaterial
     this.activeHoop?.hoop.dispose()
+    this.scoreValue++
     this.currentTargetIndex++
     if (this.currentTargetIndex < this.targets.length) {
       this.score.update({
-        value: this.score.value + 1,
+        value: this.scoreValue.toString(),
       })
       this.renderTarget(this.targets[this.currentTargetIndex])
     } else {
       this.score.update({
-        value: 666,
+        value: `CONGRATULATIONS`, // TODO: This should come from input params.
+        scale: 0.1, // TODO: This should come from input params.
+        colors: this.scoreWinColors,
       })
     }
 

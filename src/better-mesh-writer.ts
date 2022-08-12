@@ -5,18 +5,20 @@ import { MeshWriter } from 'meshwriter'
 
 export interface BetterMeshWriterParams {
   scene: Scene
-  value: number
+  value: string
   scale: number
   position: Vector3
   rotation: Vector3
+  colors: WriterColors
 }
 
 interface CreateTextMesh {
   scene: Scene,
-  value: number,
+  value: string,
   scale: number,
   position: Vector3,
   rotation: Vector3
+  colors: WriterColors
 }
 
 interface Writer {
@@ -27,13 +29,21 @@ interface Writer {
   dispose (): void
 }
 
+export interface WriterColors {
+  diffuse: string,
+  specular: string,
+  ambient: string,
+  emissive: string,
+}
+
 export class BetterMeshWriter {
 
   private readonly _scene: Scene
-  private _value: number
+  private _value: string
   private _scale: number
   private _position: Vector3
   private _rotation: Vector3
+  private _colors: WriterColors
 
   private _writer!: Writer
 
@@ -43,23 +53,17 @@ export class BetterMeshWriter {
     this._scale = params.scale
     this._position = params.position
     this._rotation = params.rotation
+    this._colors = params.colors
     this.recreateWriter()
   }
 
-  public get value (): number {
-    return this._value
-  }
-
-  public get scale (): number {
-    return this._scale
-  }
-
-  public update (payload: Partial<Pick<BetterMeshWriterParams, 'value' | 'scale' | 'position' | 'rotation'>>): void {
-    const { value, scale, position, rotation } = payload
+  public update (payload: Partial<Pick<BetterMeshWriterParams, 'value' | 'scale' | 'position' | 'rotation' | 'colors'>>): void {
+    const { value, scale, position, rotation, colors } = payload
     this._value = value ?? this._value
     this._scale = scale ?? this._scale
     this._position = position ?? this._position
     this._rotation = rotation ?? this._rotation
+    this._colors = colors ?? this._colors
     this.recreateWriter()
   }
 
@@ -70,20 +74,16 @@ export class BetterMeshWriter {
       scale,
       position,
       rotation,
+      colors,
     } = params
     const WriterFactory = MeshWriter(scene, { scale, methods: MESHWRITER_REQUIRED_METHODS })
-    const writer: Writer = new WriterFactory(String(value), {
+    const writer: Writer = new WriterFactory(value, {
       'font-family': 'Arial',
       'letter-height': 30,
       'letter-thickness': 12,
       color: '#1C3870',
       anchor: 'center',
-      colors: {
-        diffuse: '#F0F0F0',
-        specular: '#000000',
-        ambient: '#F0F0F0',
-        emissive: '#00ff04',
-      },
+      colors,
       position: position.scale(1 / scale),
     })
     const mesh = writer.getMesh()
@@ -99,6 +99,7 @@ export class BetterMeshWriter {
       scale: this._scale,
       position: this._position,
       rotation: this._rotation,
+      colors: this._colors,
     })
   }
 
