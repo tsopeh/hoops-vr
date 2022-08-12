@@ -3,7 +3,7 @@ import * as MESHWRITER_REQUIRED_METHODS from '@babylonjs/core/Legacy/legacy'
 // @ts-ignore
 import { MeshWriter } from 'meshwriter'
 
-interface BetterMeshWriterParams {
+export interface BetterMeshWriterParams {
   scene: Scene
   value: number
   scale: number

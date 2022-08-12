@@ -7,7 +7,7 @@ import '@babylonjs/serializers'
 import { createBasketballScene } from './demos/basketball'
 import { createGrabScene } from './demos/grab-scene'
 import { createTowersScene } from './demos/towers'
-import { createHoopsScene } from './hoops/hoops'
+import { createHoopsScene } from './hoops/scene'
 import { getPhysicsPlugin, PhysicsEngine } from './setup-physics-plugin'
 
 const canvas = document.getElementById('renderCanvas') as HTMLCanvasElement // Get the canvas element
