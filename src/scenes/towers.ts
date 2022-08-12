@@ -22,7 +22,7 @@ import {
 import { GridMaterial } from '@babylonjs/materials'
 import { SceneParams } from '../scene'
 
-export const createShootingScene = async (params: SceneParams): Promise<Scene> => {
+export const createTowersScene = async (params: SceneParams): Promise<Scene> => {
 
   const {engine, physicsPlugin, canvas} = params
 

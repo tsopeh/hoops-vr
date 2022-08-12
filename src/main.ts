@@ -7,7 +7,7 @@ import '@babylonjs/serializers'
 import { createBasketballScene } from './scenes/basketball'
 import { createGrabScene } from './scenes/grab-scene'
 import { createHoopsScene } from './scenes/hoops' // Needed for loading the proper controller model.
-import { createShootingScene } from './scenes/shooting-scene'
+import { createTowersScene } from './scenes/towers'
 import { getPhysicsPlugin, PhysicsEngine } from './setup-physics-plugin'
 
 const canvas = document.getElementById('renderCanvas') as HTMLCanvasElement // Get the canvas element
@@ -15,7 +15,7 @@ const engine = new Engine(canvas, true)
 
 const myScenes = {
   createGrabScene,
-  createShootingScene,
+  createTowersScene,
   createBasketballScene,
   createHoopsScene,
 }
