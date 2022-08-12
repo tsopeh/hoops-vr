@@ -56,12 +56,18 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
     enableHeadsetImpostor: true,
   })
 
+  let hoopIndex = 0
+  const getNextHoopId = (): string => {
+    hoopIndex++
+    return hoopIndex.toString()
+  }
+
   const course = new Course({
     scene,
     targets: [
       {
         hoop: {
-          id: 'hoop1',
+          id: getNextHoopId(),
           diameter: 10,
           thickness: 1,
           tessellation: 32,
@@ -71,19 +77,49 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
       },
       {
         hoop: {
-          id: 'hoop2',
+          id: getNextHoopId(),
           diameter: 20,
-          thickness: 3,
-          tessellation: 8,
-          position: new Vector3(0, 10, -350),
+          thickness: 1,
+          tessellation: 32,
+          position: new Vector3(0, 25, -380),
+          rotation: new Vector3(Tools.ToRadians(90), 0, 0),
+        },
+      },
+      {
+        hoop: {
+          id: getNextHoopId(),
+          diameter: 15,
+          thickness: 1.5,
+          tessellation: 3,
+          position: new Vector3(10, 10, -400),
+          rotation: new Vector3(Tools.ToRadians(90), 0, 0),
+        },
+      },
+      {
+        hoop: {
+          id: getNextHoopId(),
+          diameter: 15,
+          thickness: 1,
+          tessellation: 4,
+          position: new Vector3(-10, 10, -400),
+          rotation: new Vector3(Tools.ToRadians(90), 0, 0),
+        },
+      },
+      {
+        hoop: {
+          id: getNextHoopId(),
+          diameter: 15,
+          thickness: 1,
+          tessellation: 5,
+          position: new Vector3(0, 8, -410),
           rotation: new Vector3(Tools.ToRadians(90), 0, 0),
         },
       },
     ],
     score: {
       scale: 0.5,
-      position: new Vector3(0, 10, -400),
-      rotation: new Vector3(Tools.ToRadians(-90), 0, 0),
+      position: new Vector3(0, 30, -400),
+      rotation: new Vector3(Tools.ToRadians(230), 0, 0),
       scoreColors: {
         diffuse: '#F0F0F0',
         specular: '#000000',

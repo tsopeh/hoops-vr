@@ -22,7 +22,7 @@ export const createHoop = (params: CreateHoopParams): CreatedHoop => {
 
   const { id, diameter, thickness, tessellation, scene, position, rotation, sensor1Material, sensor2Material } = params
 
-  const hoop = MeshBuilder.CreateTorus(`torus-${id}`, { diameter, thickness, tessellation }, scene)
+  const hoop = MeshBuilder.CreateTorus(`hoop-${id}`, { diameter, thickness, tessellation }, scene)
   hoop.position = position
   hoop.rotation = rotation
   // hoop.physicsImpostor = new PhysicsImpostor(

@@ -108,7 +108,7 @@ export class Course {
     } else {
       this.score.update({
         value: `CONGRATULATIONS`, // TODO: This should come from input params.
-        scale: 0.1, // TODO: This should come from input params.
+        scale: 0.3, // TODO: This should come from input params.
         colors: this.scoreWinColors,
       })
     }
