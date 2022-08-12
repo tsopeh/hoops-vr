@@ -1,4 +1,13 @@
-import { AbstractMesh, ActionManager, Color3, ExecuteCodeAction, Scene, StandardMaterial } from '@babylonjs/core'
+import {
+  AbstractMesh,
+  ActionManager,
+  Animation,
+  Color3,
+  ExecuteCodeAction,
+  IAnimationKey,
+  Scene,
+  StandardMaterial,
+} from '@babylonjs/core'
 import { BetterMeshWriter, BetterMeshWriterParams, WriterColors } from '../better-mesh-writer'
 import { CreatedHoop, createHoop, CreateHoopParams } from './hoop'
 
@@ -10,6 +19,16 @@ export interface CourseParams {
 
 export interface Target {
   hoop: Omit<CreateHoopParams, 'scene' | 'sensor1Material' | 'sensor2Material'>
+  animation?: TargetAnimation
+}
+
+interface TargetAnimation {
+  framerate: number
+  affectedProperty: 'position.x' | 'position.y' | 'position.z' | 'rotation.x' | 'rotation.y' | 'rotation.z'
+  loopMode: 'relative' | 'cycle' | 'constant'
+  keyFrames: ReadonlyArray<IAnimationKey>
+  fromFrame: number
+  toFrame: number
 }
 
 export type CourseScore =
@@ -19,13 +38,15 @@ export type CourseScore =
 export class Course {
 
   private readonly scene: Scene
+
   private readonly targets: ReadonlyArray<Target>
   private readonly score: BetterMeshWriter
-  private activeHoop!: CreatedHoop
+
+  private activeHoop: CreatedHoop | null = null
   private currentTargetIndex: number = 0
+
   private readonly bulletMaterial: StandardMaterial
   private readonly scoreWinColors: WriterColors
-
   private readonly sensorMaterials: ReadonlyArray<StandardMaterial>
 
   private scoreValue: number = 0
@@ -64,6 +85,8 @@ export class Course {
 
   public registerBullet (bullet: AbstractMesh): void {
 
+    if (this.activeHoop == null) return
+
     const { sensor1, sensor2 } = this.activeHoop
 
     bullet.actionManager = new ActionManager(this.scene)
@@ -93,10 +116,18 @@ export class Course {
       sensor1Material: this.sensorMaterials[0],
       sensor2Material: this.sensorMaterials[1],
     })
+    if (target.animation == null) return
+    const { framerate, affectedProperty, loopMode, keyFrames, fromFrame, toFrame } = target.animation
+    const hoopMesh = this.activeHoop.hoop
+    const animation = new Animation(`hoop-animation--${target.hoop.id}`, affectedProperty, framerate, Animation.ANIMATIONTYPE_FLOAT, getConcreteLoopMode(loopMode))
+    animation.setKeys([...keyFrames])
+    this.scene.beginDirectAnimation(hoopMesh, [animation], fromFrame, toFrame, true)
   }
 
   private onTargetHit (bullet: AbstractMesh): void {
     bullet.material = this.bulletMaterial
+    this.activeHoop?.sensor1.dispose()
+    this.activeHoop?.sensor2.dispose()
     this.activeHoop?.hoop.dispose()
     this.scoreValue++
     this.currentTargetIndex++
@@ -111,8 +142,22 @@ export class Course {
         scale: 0.3, // TODO: This should come from input params.
         colors: this.scoreWinColors,
       })
+      this.activeHoop = null
     }
 
   }
 
+}
+
+function getConcreteLoopMode (loopMode: 'relative' | 'cycle' | 'constant'): number {
+  switch (loopMode) {
+    case 'relative':
+      return Animation.ANIMATIONLOOPMODE_RELATIVE
+    case 'cycle':
+      return Animation.ANIMATIONLOOPMODE_CYCLE
+    case 'constant':
+      return Animation.ANIMATIONLOOPMODE_CONSTANT
+    default:
+      return Animation.ANIMATIONLOOPMODE_RELATIVE
+  }
 }
