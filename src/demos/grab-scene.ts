@@ -13,7 +13,7 @@ import { PickingInfo } from '@babylonjs/core/Collisions/pickingInfo'
 import { Nullable } from '@babylonjs/core/types'
 import { SceneParams } from '../scene'
 
-export const createGrabScene = async ({engine, physicsPlugin, canvas}: SceneParams): Promise<Scene> => {
+export const createGrabScene = async ({ engine, physicsPlugin, canvas }: SceneParams): Promise<Scene> => {
 
   const scene = new Scene(engine)
 
@@ -21,9 +21,9 @@ export const createGrabScene = async ({engine, physicsPlugin, canvas}: ScenePara
   const camera = new ArcRotateCamera('Camera', 0, 0.8, 50, new Vector3(), scene)
   camera.attachControl(canvas, true)
 
-  const ground = MeshBuilder.CreateGround('ground', {width: 50, height: 50, subdivisions: 5}, scene)
+  const ground = MeshBuilder.CreateGround('ground', { width: 50, height: 50, subdivisions: 5 }, scene)
 
-  const box = MeshBuilder.CreateBox('box', {size: 4.0}, scene)
+  const box = MeshBuilder.CreateBox('box', { size: 4.0 }, scene)
   box.position.y = 2
   box.scaling.z = 2
   const matBox = new StandardMaterial('matBox', scene)
@@ -32,7 +32,7 @@ export const createGrabScene = async ({engine, physicsPlugin, canvas}: ScenePara
   box.isPickable = true
   console.log(box.position)
 
-  const box2 = MeshBuilder.CreateBox('box2', {size: 8.0}, scene)
+  const box2 = MeshBuilder.CreateBox('box2', { size: 8.0 }, scene)
   box2.position = new Vector3(-20, 4, 0)
   const matBox2 = new StandardMaterial('matBox2', scene)
   matBox2.diffuseColor = new Color3(0.1, 0.1, 1)

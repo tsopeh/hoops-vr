@@ -2,12 +2,12 @@ import { Engine } from '@babylonjs/core'
 import '@babylonjs/gui'
 import '@babylonjs/gui-editor'
 import '@babylonjs/inspector'
-import '@babylonjs/loaders'
+import '@babylonjs/loaders' // Needed for loading the proper controller model.
 import '@babylonjs/serializers'
-import { createBasketballScene } from './scenes/basketball'
-import { createGrabScene } from './scenes/grab-scene'
-import { createHoopsScene } from './scenes/hoops' // Needed for loading the proper controller model.
-import { createTowersScene } from './scenes/towers'
+import { createBasketballScene } from './demos/basketball'
+import { createGrabScene } from './demos/grab-scene'
+import { createTowersScene } from './demos/towers'
+import { createHoopsScene } from './hoops/hoops'
 import { getPhysicsPlugin, PhysicsEngine } from './setup-physics-plugin'
 
 const canvas = document.getElementById('renderCanvas') as HTMLCanvasElement // Get the canvas element

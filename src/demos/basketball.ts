@@ -16,7 +16,7 @@ import { SceneParams } from '../scene'
 
 export const createBasketballScene = async (params: SceneParams): Promise<Scene> => {
 
-  const {engine, physicsPlugin, canvas} = params
+  const { engine, physicsPlugin, canvas } = params
 
   const scene = new Scene(engine)
   scene.collisionsEnabled = true
@@ -37,19 +37,19 @@ export const createBasketballScene = async (params: SceneParams): Promise<Scene>
   greenMat.diffuseColor = new Color3(0, 1, 0)
 
   const sensor1 = MeshBuilder.CreateBox('sensor1',
-    {'height': 0.05, 'width': 0.3, 'depth': 0.3}, scene)
+    { 'height': 0.05, 'width': 0.3, 'depth': 0.3 }, scene)
   sensor1.position.z = -0.22
   sensor1.position.y = 3.2
   sensor1.material = greenTrans
 
   const sensor2 = MeshBuilder.CreateBox('sensor2',
-    {'height': 0.05, 'width': 0.3, 'depth': 0.3}, scene)
+    { 'height': 0.05, 'width': 0.3, 'depth': 0.3 }, scene)
   sensor2.position.z = -0.22
   sensor2.position.y = 2.8
   sensor2.material = greenTrans
 
   const person = MeshBuilder.CreateCylinder('person',
-    {diameterBottom: 0.5, diameterTop: 0.5, height: 1.6, tessellation: 32}, scene)
+    { diameterBottom: 0.5, diameterTop: 0.5, height: 1.6, tessellation: 32 }, scene)
   person.position.y = 0.8
   person.position.z = -3
 
@@ -77,7 +77,7 @@ export const createBasketballScene = async (params: SceneParams): Promise<Scene>
 
   function shoot () {
     if (balls.length < 100) {
-      const sphere = MeshBuilder.CreateSphere('sphere', {segments: 32, diameter: 0.246}, scene)
+      const sphere = MeshBuilder.CreateSphere('sphere', { segments: 32, diameter: 0.246 }, scene)
       balls.push(sphere)
       sphere.position = person.getAbsolutePosition()
 
@@ -91,7 +91,7 @@ export const createBasketballScene = async (params: SceneParams): Promise<Scene>
       const force = 3.2
 
       const sphere_impostor = new PhysicsImpostor(
-        sphere, PhysicsImpostor.SphereImpostor, {mass: 1, restitution: 0.7}, scene,
+        sphere, PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0.7 }, scene,
       )
 
       sphere_impostor.applyImpulse(
@@ -106,13 +106,13 @@ export const createBasketballScene = async (params: SceneParams): Promise<Scene>
 
       sphere.actionManager = new ActionManager(scene)
       sphere.actionManager.registerAction(new ExecuteCodeAction(
-        {trigger: ActionManager.OnIntersectionExitTrigger, parameter: sensor1},
+        { trigger: ActionManager.OnIntersectionExitTrigger, parameter: sensor1 },
         (event) => {
           event.source.passthrough = 1
         },
       ))
       sphere.actionManager.registerAction(new ExecuteCodeAction(
-        {trigger: ActionManager.OnIntersectionExitTrigger, parameter: sensor2},
+        { trigger: ActionManager.OnIntersectionExitTrigger, parameter: sensor2 },
         (event) => {
           if (event.source.passthrough == 1) {
             event.source.material = greenMat
@@ -123,37 +123,40 @@ export const createBasketballScene = async (params: SceneParams): Promise<Scene>
   }
 
   const box = MeshBuilder.CreateBox('box',
-    {'height': 1, 'width': 1, 'depth': 0.05}, scene)
+    { 'height': 1, 'width': 1, 'depth': 0.05 }, scene)
   box.position.y = 3.2
   box.physicsImpostor = new PhysicsImpostor(box,
-    PhysicsImpostor.BoxImpostor, {mass: 0, restitution: 0.7}, scene)
+    PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.7 }, scene)
 
   const bar1 = MeshBuilder.CreateBox('bar1',
-    {'height': 0.05, 'width': 0.5, 'depth': 0.05}, scene)
+    { 'height': 0.05, 'width': 0.5, 'depth': 0.05 }, scene)
   bar1.position.z = -0.45
   bar1.position.y = 3
   bar1.physicsImpostor = new PhysicsImpostor(bar1,
-    PhysicsImpostor.BoxImpostor, {mass: 0, restitution: 0.7}, scene)
+    PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.7 }, scene)
 
   const bar2 = MeshBuilder.CreateBox('bar2',
-    {'height': 0.05, 'width': 0.05, 'depth': 0.45}, scene)
+    { 'height': 0.05, 'width': 0.05, 'depth': 0.45 }, scene)
   bar2.position.z = -0.225
   bar2.position.y = 3
   bar2.position.x = 0.225
   bar2.physicsImpostor = new PhysicsImpostor(bar2,
-    PhysicsImpostor.BoxImpostor, {mass: 0, restitution: 0.7}, scene)
+    PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.7 }, scene)
 
   const bar3 = MeshBuilder.CreateBox('bar3',
-    {'height': 0.05, 'width': 0.05, 'depth': 0.45}, scene)
+    { 'height': 0.05, 'width': 0.05, 'depth': 0.45 }, scene)
   bar3.position.z = -0.225
   bar3.position.y = 3
   bar3.position.x = -0.225
   bar3.physicsImpostor = new PhysicsImpostor(bar3,
-    PhysicsImpostor.BoxImpostor, {mass: 0, restitution: 0.7}, scene)
+    PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.7 }, scene)
 
-  const ground = MeshBuilder.CreateGround('ground1', {height: 10, width: 10}, scene)
+  const ground = MeshBuilder.CreateGround('ground1', { height: 10, width: 10 }, scene)
   ground.position.y = 0
-  ground.physicsImpostor = new PhysicsImpostor(ground, PhysicsImpostor.BoxImpostor, {mass: 0, restitution: 0.7}, scene)
+  ground.physicsImpostor = new PhysicsImpostor(ground, PhysicsImpostor.BoxImpostor, {
+    mass: 0,
+    restitution: 0.7,
+  }, scene)
 
   const camera = new ArcRotateCamera('Camera', 320 / 180 * Math.PI, 70 / 180 * Math.PI, 15,
     new Vector3(0, 0, 0), scene)
@@ -161,7 +164,7 @@ export const createBasketballScene = async (params: SceneParams): Promise<Scene>
 
   scene.activeCamera = camera
   scene.createDefaultLight()
-  scene.createDefaultEnvironment({createGround: false})
+  scene.createDefaultEnvironment({ createGround: false })
 
   return scene
 }
