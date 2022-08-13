@@ -87,22 +87,27 @@ export class Course {
 
     if (this.activeHoop == null) return
 
-    const { sensor1, sensor2 } = this.activeHoop
+    const activeHoop = this.activeHoop
+
+    const { sensor1, sensor2 } = activeHoop
 
     bullet.actionManager = new ActionManager(this.scene)
 
+    let didPassThroughFirstSensor = false
+
     bullet.actionManager.registerAction(new ExecuteCodeAction(
       { trigger: ActionManager.OnIntersectionExitTrigger, parameter: sensor1 },
-      (event) => {
-        event.source.passthrough = 1
+      () => {
+        didPassThroughFirstSensor = true
       },
     ))
 
     bullet.actionManager.registerAction(new ExecuteCodeAction(
       { trigger: ActionManager.OnIntersectionExitTrigger, parameter: sensor2 },
-      (event) => {
-        if (event.source.passthrough == 1) {
-          this.onTargetHit(event.source)
+      () => {
+        const didNotChangeCurrentActiveHoop = activeHoop == this.activeHoop
+        if (didPassThroughFirstSensor && didNotChangeCurrentActiveHoop) {
+          this.onTargetHit(bullet)
         }
       },
     ))
