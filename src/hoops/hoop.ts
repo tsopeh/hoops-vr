@@ -1,4 +1,4 @@
-import { AbstractMesh, Material, MeshBuilder, Scene, Vector3 } from '@babylonjs/core'
+import { AbstractMesh, Material, MeshBuilder, Scene, TransformNode, Vector3 } from '@babylonjs/core'
 
 export interface CreateHoopParams {
   id: string
@@ -22,9 +22,11 @@ export const createHoop = (params: CreateHoopParams): CreatedHoop => {
 
   const { id, diameter, thickness, tessellation, scene, position, rotation, sensor1Material, sensor2Material } = params
 
+  const parent = new TransformNode('node')
   const hoop = MeshBuilder.CreateTorus(`hoop-${id}`, { diameter, thickness, tessellation }, scene)
-  hoop.position = position
+  hoop.parent = parent
   hoop.rotation = rotation
+  hoop.position = position
   // hoop.physicsImpostor = new PhysicsImpostor(
   //   hoop,
   //   PhysicsImpostor.BoxImpostor,

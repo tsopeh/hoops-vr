@@ -68,34 +68,6 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
       {
         hoop: {
           id: getNextHoopId(),
-          diameter: 15,
-          thickness: 1.5,
-          tessellation: 3,
-          position: new Vector3(10, 10, -400),
-          rotation: new Vector3(Tools.ToRadians(90), 0, 0),
-        },
-        // TODO: Rotate visually clockwise.
-        // animation: {
-        //   framerate: 15,
-        //   loopMode: 'cycle',
-        //   affectedProperty: 'rotation.z',
-        //   keyFrames: [
-        //     {
-        //       frame: 0,
-        //       value: 0,
-        //     },
-        //     {
-        //       frame: 15,
-        //       value: 360,
-        //     },
-        //   ],
-        //   fromFrame: 0,
-        //   toFrame: 15,
-        // },
-      },
-      {
-        hoop: {
-          id: getNextHoopId(),
           diameter: 10,
           thickness: 1,
           tessellation: 32,
@@ -146,10 +118,37 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
         hoop: {
           id: getNextHoopId(),
           diameter: 15,
+          thickness: 1.5,
+          tessellation: 3,
+          position: new Vector3(10, 10, -400),
+          rotation: new Vector3(Tools.ToRadians(90), 0, 0),
+        },
+      },
+      {
+        hoop: {
+          id: getNextHoopId(),
+          diameter: 15,
           thickness: 1,
           tessellation: 4,
           position: new Vector3(-10, 10, -400),
           rotation: new Vector3(Tools.ToRadians(90), 0, 0),
+        },
+        animation: {
+          framerate: 15,
+          loopMode: 'cycle',
+          affectedProperty: 'rotation.y',
+          keyFrames: [
+            {
+              frame: 0,
+              value: 0,
+            },
+            {
+              frame: 120,
+              value: 2 * Math.PI,
+            },
+          ],
+          fromFrame: 0,
+          toFrame: 120,
         },
       },
       {
