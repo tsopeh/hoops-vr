@@ -1,4 +1,4 @@
-import { AbstractMesh, Material, MeshBuilder, Scene, Vector3 } from '@babylonjs/core'
+import { AbstractMesh, Material, MeshBuilder, PhysicsImpostor, PhysicsViewer, Scene, Vector3 } from '@babylonjs/core'
 
 export interface CreateHoopParams {
   id: string
@@ -12,38 +12,52 @@ export interface CreateHoopParams {
   sensor2Material: Material
 }
 
-export interface CreatedHoop {
+export interface Hoop {
   hoop: AbstractMesh
   sensor1: AbstractMesh
   sensor2: AbstractMesh
 }
 
-export const createHoop = (params: CreateHoopParams): CreatedHoop => {
+export const createHoop = (params: CreateHoopParams): Hoop => {
 
   const { id, diameter, thickness, tessellation, scene, position, rotation, sensor1Material, sensor2Material } = params
 
   const hoop = MeshBuilder.CreateTorus(`hoop-${id}`, { diameter, thickness, tessellation }, scene)
   hoop.position = position
   hoop.rotation = rotation
-  // hoop.physicsImpostor = new PhysicsImpostor(
-  //   hoop,
-  //   PhysicsImpostor.BoxImpostor,
-  //   {
-  //     mass: 0,
-  //     restitution: 1,
-  //   },
-  // )
+  const physicsImpostor = new PhysicsImpostor(
+    hoop,
+    PhysicsImpostor.MeshImpostor,
+    {
+      mass: 0,
+      friction: 0.5,
+      restitution: 0.3,
+    },
+  )
+  const viewer = new PhysicsViewer(scene)
+  viewer.showImpostor(physicsImpostor, hoop)
+  hoop.physicsImpostor = physicsImpostor
 
   const sensorDepth = 1
+  const sensorDiameter = diameter - thickness
+  const sensorOffsetFromHoopCenter = (sensorDepth / 2) + (thickness / 2)
 
-  const sensor1 = MeshBuilder.CreateCylinder(`sensor-1-${id}`, { diameter, tessellation, height: sensorDepth }, scene)
+  const sensor1 = MeshBuilder.CreateCylinder(`sensor-1-${id}`, {
+    diameter: sensorDiameter,
+    tessellation,
+    height: sensorDepth,
+  }, scene)
   sensor1.parent = hoop
-  sensor1.position.y -= (sensorDepth / 2)
+  sensor1.position.y = -sensorOffsetFromHoopCenter // Note the `-`.
   sensor1.material = sensor1Material
 
-  const sensor2 = MeshBuilder.CreateCylinder(`sensor-2-${id}`, { diameter, tessellation, height: sensorDepth }, scene)
+  const sensor2 = MeshBuilder.CreateCylinder(`sensor-2-${id}`, {
+    diameter: sensorDiameter,
+    tessellation,
+    height: sensorDepth,
+  }, scene)
   sensor2.parent = hoop
-  sensor2.position.y += (sensorDepth / 2)
+  sensor2.position.y = sensorOffsetFromHoopCenter
   sensor2.material = sensor2Material
 
   return {

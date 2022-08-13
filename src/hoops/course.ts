@@ -9,7 +9,7 @@ import {
   StandardMaterial,
 } from '@babylonjs/core'
 import { BetterMeshWriter, BetterMeshWriterParams, WriterColors } from '../better-mesh-writer'
-import { CreatedHoop, createHoop, CreateHoopParams } from './hoop'
+import { Hoop, createHoop, CreateHoopParams } from './hoop'
 
 export interface CourseParams {
   scene: Scene
@@ -42,7 +42,7 @@ export class Course {
   private readonly targets: ReadonlyArray<Target>
   private readonly score: BetterMeshWriter
 
-  private activeHoop: CreatedHoop | null = null
+  private activeHoop: Hoop | null = null
   private currentTargetIndex: number = 0
 
   private readonly bulletMaterial: StandardMaterial
@@ -93,23 +93,32 @@ export class Course {
 
     bullet.actionManager = new ActionManager(this.scene)
 
-    let sensorsHit = 0
-    const onTrigger = () => {
-      sensorsHit++
-      if (sensorsHit == 2) {
-        this.onTargetHit(bullet)
-      }
-    }
-
+    let didHitSensor1 = false
     bullet.actionManager.registerAction(new ExecuteCodeAction(
       { trigger: ActionManager.OnIntersectionExitTrigger, parameter: sensor1 },
-      onTrigger,
+      () => {
+        didHitSensor1 = true
+        onHit()
+      },
     ))
 
+    let didHitSensor2 = false
     bullet.actionManager.registerAction(new ExecuteCodeAction(
       { trigger: ActionManager.OnIntersectionExitTrigger, parameter: sensor2 },
-      onTrigger,
+      () => {
+        didHitSensor2 = true
+        onHit()
+      },
     ))
+
+    const that = this
+
+    function onHit () {
+      const isSameActiveHoop = activeHoop == that.activeHoop
+      if (didHitSensor1 && didHitSensor2 && isSameActiveHoop) {
+        that.onTargetHit(bullet)
+      }
+    }
 
   }
 
