@@ -5,6 +5,7 @@ import {
   MeshBuilder,
   PhysicsImpostor,
   PointerEventTypes,
+  Ray,
   Scene,
   Tools,
   Vector3,
@@ -83,45 +84,35 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
           tessellation: 32,
           position: new Vector3(0, 25, -380),
           rotation: new Vector3(Tools.ToRadians(90), 0, 0),
-        },
-        animation: {
-          framerate: 15,
-          loopMode: 'cycle',
-          affectedProperty: 'position.x',
-          keyFrames: [
-            {
-              frame: 0,
-              value: 0,
-            },
-            {
-              frame: 15,
-              value: 10,
-            },
-            {
-              frame: 30,
-              value: 0,
-            },
-            {
-              frame: 45,
-              value: -10,
-            },
-            {
-              frame: 60,
-              value: 0,
-            },
-          ],
-          fromFrame: 0,
-          toFrame: 60,
-        },
-      },
-      {
-        hoop: {
-          id: getNextHoopId(),
-          diameter: 15,
-          thickness: 1.5,
-          tessellation: 3,
-          position: new Vector3(10, 10, -400),
-          rotation: new Vector3(Tools.ToRadians(90), 0, 0),
+          animation: {
+            framerate: 15,
+            loopMode: 'cycle',
+            affectedProperty: 'position.x',
+            keyFrames: [
+              {
+                frame: 0,
+                value: 0,
+              },
+              {
+                frame: 15,
+                value: 10,
+              },
+              {
+                frame: 30,
+                value: 0,
+              },
+              {
+                frame: 45,
+                value: -10,
+              },
+              {
+                frame: 60,
+                value: 0,
+              },
+            ],
+            fromFrame: 0,
+            toFrame: 60,
+          },
         },
       },
       {
@@ -129,26 +120,36 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
           id: getNextHoopId(),
           diameter: 15,
           thickness: 1,
-          tessellation: 4,
+          tessellation: 3,
           position: new Vector3(-10, 10, -400),
           rotation: new Vector3(Tools.ToRadians(90), 0, 0),
         },
-        animation: {
-          framerate: 15,
-          loopMode: 'cycle',
-          affectedProperty: 'rotation.y',
-          keyFrames: [
-            {
-              frame: 0,
-              value: 0,
-            },
-            {
-              frame: 120,
-              value: 2 * Math.PI,
-            },
-          ],
-          fromFrame: 0,
-          toFrame: 120,
+      },
+      {
+        hoop: {
+          id: getNextHoopId(),
+          diameter: 15,
+          thickness: 1.5,
+          tessellation: 4,
+          position: new Vector3(10, 10, -400),
+          rotation: new Vector3(Tools.ToRadians(90), 0, 0),
+          animation: {
+            framerate: 15,
+            loopMode: 'cycle',
+            affectedProperty: 'rotation.y',
+            keyFrames: [
+              {
+                frame: 0,
+                value: 0,
+              },
+              {
+                frame: 120,
+                value: 2 * Math.PI,
+              },
+            ],
+            fromFrame: 0,
+            toFrame: 120,
+          },
         },
       },
       {
@@ -181,6 +182,7 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
     },
   })
 
+  let worldPointerRay: Ray
   scene.onPointerObservable.add((event) => {
     if (event.type === PointerEventTypes.POINTERPICK) {
       const pointerId = (event.event as any).pointerId
@@ -188,12 +190,12 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
       const isMouseCursorPointer = xrController == null
       const isXrController = xrController?.motionController != null
       if (isMouseCursorPointer || isXrController) {
-        const bullet = MeshBuilder.CreateSphere('bullet', { diameter: 0.5 })
-        // TODO: Toggle this to see the difference.
-        // if (xrController) {
-        //     xrController.getWorldPointerRayToRef(tmpRay);
-        // }
-        const ray = /*xrController ? tmpRay :*/event.pickInfo?.ray
+        const bullet = MeshBuilder.CreateSphere('bullet', { diameter: 2 })
+        if (xrController) {
+          // TODO: Toggle this to see the difference.
+          xrController.getWorldPointerRayToRef(worldPointerRay)
+        }
+        const ray = worldPointerRay != null ? worldPointerRay : event.pickInfo?.ray
         if (ray == null) return
         ray.direction.scaleInPlace(0.2) // TODO: Change this to see what it does?
         bullet.position.copyFrom(ray.origin)
@@ -210,6 +212,8 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
       }
     }
   })
+
+  scene.collisionsEnabled = true
 
   return scene
 

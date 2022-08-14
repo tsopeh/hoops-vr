@@ -1,15 +1,6 @@
-import {
-  AbstractMesh,
-  ActionManager,
-  Animation,
-  Color3,
-  ExecuteCodeAction,
-  IAnimationKey,
-  Scene,
-  StandardMaterial,
-} from '@babylonjs/core'
+import { AbstractMesh, Color3, Scene, StandardMaterial } from '@babylonjs/core'
 import { BetterMeshWriter, BetterMeshWriterParams, WriterColors } from '../better-mesh-writer'
-import { Hoop, createHoop, CreateHoopParams } from './hoop'
+import { createHoop, CreateHoopParams, Hoop } from './hoop'
 
 export interface CourseParams {
   scene: Scene
@@ -19,16 +10,6 @@ export interface CourseParams {
 
 export interface Target {
   hoop: Omit<CreateHoopParams, 'scene' | 'sensor1Material' | 'sensor2Material'>
-  animation?: TargetAnimation
-}
-
-interface TargetAnimation {
-  framerate: number
-  affectedProperty: 'position.x' | 'position.y' | 'position.z' | 'rotation.x' | 'rotation.y' | 'rotation.z'
-  loopMode: 'relative' | 'cycle' | 'constant'
-  keyFrames: ReadonlyArray<IAnimationKey>
-  fromFrame: number
-  toFrame: number
 }
 
 export type CourseScore =
@@ -91,35 +72,24 @@ export class Course {
 
     const { sensor1, sensor2 } = activeHoop
 
-    bullet.actionManager = new ActionManager(this.scene)
-
-    let didHitSensor1 = false
-    bullet.actionManager.registerAction(new ExecuteCodeAction(
-      { trigger: ActionManager.OnIntersectionExitTrigger, parameter: sensor1 },
-      () => {
+    let didHitSensor1: boolean = false
+    let didHitSensor2: boolean = false
+    const handler = () => {
+      if (bullet.intersectsMesh(sensor1, true)) {
         didHitSensor1 = true
-        onHit()
-      },
-    ))
-
-    let didHitSensor2 = false
-    bullet.actionManager.registerAction(new ExecuteCodeAction(
-      { trigger: ActionManager.OnIntersectionExitTrigger, parameter: sensor2 },
-      () => {
+      }
+      if (bullet.intersectsMesh(sensor2, true)) {
         didHitSensor2 = true
-        onHit()
-      },
-    ))
-
-    const that = this
-
-    function onHit () {
-      const isSameActiveHoop = activeHoop == that.activeHoop
+      }
+      const isSameActiveHoop = activeHoop == this.activeHoop
       if (didHitSensor1 && didHitSensor2 && isSameActiveHoop) {
-        that.onTargetHit(bullet)
+        this.onTargetHit(bullet)
+      }
+      if (!isSameActiveHoop) {
+        this.scene.unregisterBeforeRender(handler)
       }
     }
-
+    this.scene.registerBeforeRender(handler)
   }
 
   private renderTarget (target: Target): void {
@@ -129,19 +99,11 @@ export class Course {
       sensor1Material: this.sensorMaterials[0],
       sensor2Material: this.sensorMaterials[1],
     })
-    if (target.animation == null) return
-    const { framerate, affectedProperty, loopMode, keyFrames, fromFrame, toFrame } = target.animation
-    const hoopMesh = this.activeHoop.hoop
-    const animation = new Animation(`hoop-animation--${target.hoop.id}`, affectedProperty, framerate, Animation.ANIMATIONTYPE_FLOAT, getConcreteLoopMode(loopMode))
-    animation.setKeys([...keyFrames])
-    this.scene.beginDirectAnimation(hoopMesh, [animation], fromFrame, toFrame, true)
   }
 
   private onTargetHit (bullet: AbstractMesh): void {
     bullet.material = this.bulletMaterial
-    this.activeHoop?.sensor1.dispose()
-    this.activeHoop?.sensor2.dispose()
-    this.activeHoop?.hoop.dispose()
+    this.activeHoop?.dispose()
     this.scoreValue++
     this.currentTargetIndex++
     if (this.currentTargetIndex < this.targets.length) {
@@ -160,17 +122,4 @@ export class Course {
 
   }
 
-}
-
-function getConcreteLoopMode (loopMode: 'relative' | 'cycle' | 'constant'): number {
-  switch (loopMode) {
-    case 'relative':
-      return Animation.ANIMATIONLOOPMODE_RELATIVE
-    case 'cycle':
-      return Animation.ANIMATIONLOOPMODE_CYCLE
-    case 'constant':
-      return Animation.ANIMATIONLOOPMODE_CONSTANT
-    default:
-      return Animation.ANIMATIONLOOPMODE_RELATIVE
-  }
 }
