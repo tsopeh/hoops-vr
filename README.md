@@ -1,4 +1,4 @@
-# VR Tetris
+# Hoops VR
 
 ## Development
 
