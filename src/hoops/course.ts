@@ -1,4 +1,4 @@
-import { AbstractMesh, Color3, Scene, StandardMaterial } from '@babylonjs/core'
+import { AbstractMesh, Color3, Scene, Sound, StandardMaterial } from '@babylonjs/core'
 import { BetterMeshWriter, BetterMeshWriterParams, WriterColors } from '../better-mesh-writer'
 import { createHoop, CreateHoopParams, Hoop } from './hoop'
 
@@ -32,6 +32,8 @@ export class Course {
 
   private scoreValue: number = 0
 
+  private readonly audio: { background: Sound, shoot: Sound, hit: Sound, win: Sound, }
+
   public constructor (params: CourseParams) {
     this.scene = params.scene
     this.targets = params.targets
@@ -62,9 +64,19 @@ export class Course {
     })
     this.scoreWinColors = params.score.winColors
     this.renderTarget(this.targets[this.currentTargetIndex])
+
+    this.audio = {
+      background: new Sound('background', 'assets/background.mp3', this.scene, null, { loop: true, autoplay: true }),
+      shoot: new Sound('shoot', 'assets/shoot.wav', this.scene, null, { loop: false, autoplay: false }),
+      hit: new Sound('hit', 'assets/hit.wav', this.scene, null, { loop: false, autoplay: false }),
+      win: new Sound('win', 'assets/win.wav', this.scene, null, { loop: false, autoplay: false }),
+    }
+
   }
 
   public registerBullet (bullet: AbstractMesh): void {
+
+    this.audio.shoot.play()
 
     if (this.activeHoop == null) return
 
@@ -103,6 +115,7 @@ export class Course {
 
   private onTargetHit (bullet: AbstractMesh): void {
     bullet.material = this.bulletMaterial
+    this.audio.hit.play()
     this.activeHoop?.dispose()
     this.scoreValue++
     this.currentTargetIndex++
@@ -112,6 +125,12 @@ export class Course {
       })
       this.renderTarget(this.targets[this.currentTargetIndex])
     } else {
+      this.audio.background.setVolume(0.3)
+      this.audio.win.onended = () => {
+        this.audio.background.setVolume(1)
+      }
+      this.audio.win.play()
+
       this.score.update({
         value: `CONGRATULATIONS`, // TODO: This should come from input params.
         scale: 0.3, // TODO: This should come from input params.
