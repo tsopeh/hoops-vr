@@ -1,5 +1,6 @@
 import {
   Color3,
+  CubeTexture,
   FreeCamera,
   HemisphericLight,
   MeshBuilder,
@@ -34,8 +35,18 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
   const light = new HemisphericLight('light', new Vector3(0, 1, 0), scene)
   light.intensity = 0.7
 
-  const environment = scene.createDefaultEnvironment({ createGround: false, skyboxSize: 10000 })
+  const environment = scene.createDefaultEnvironment({ createGround: false, createSkybox: false })
   environment!.setMainColor(Color3.FromHexString('#74b9ff'))
+
+  // Skybox
+  const skybox = MeshBuilder.CreateBox('skyBox', { size: 1000.0 }, scene)
+  const skyboxMaterial = new StandardMaterial('skyBox', scene)
+  skyboxMaterial.backFaceCulling = false
+  skyboxMaterial.reflectionTexture = new CubeTexture('assets/skybox', scene)
+  skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE
+  skyboxMaterial.diffuseColor = new Color3(0, 0, 0)
+  skyboxMaterial.specularColor = new Color3(0, 0, 0)
+  skybox.material = skyboxMaterial
 
   // Create terrain material
   const terrainMaterial = new TerrainMaterial('terrainMaterial', scene)
