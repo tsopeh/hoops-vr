@@ -1,6 +1,7 @@
 import { AbstractMesh, Color3, Scene, Sound, StandardMaterial } from '@babylonjs/core'
 import { BetterMeshWriter, BetterMeshWriterParams, WriterColors } from '../better-mesh-writer'
 import { createHoop, CreateHoopParams, Hoop } from './hoop'
+import { assetsPath } from './utils'
 
 export interface CourseParams {
   scene: Scene
@@ -66,13 +67,13 @@ export class Course {
     this.renderTarget(this.targets[this.currentTargetIndex])
 
     this.audio = {
-      background: new Sound('background', '/assets/background.mp3', this.scene, null, {
+      background: new Sound('background', assetsPath('background.mp3'), this.scene, null, {
         loop: true,
         autoplay: true,
       }),
-      shoot: new Sound('shoot', '/assets/shoot.wav', this.scene, null, { loop: false, autoplay: false }),
-      hit: new Sound('hit', '/assets/hit.wav', this.scene, null, { loop: false, autoplay: false }),
-      win: new Sound('win', '/assets/win.wav', this.scene, null, { loop: false, autoplay: false }),
+      shoot: new Sound('shoot', assetsPath('shoot.wav'), this.scene, null, { loop: false, autoplay: false }),
+      hit: new Sound('hit', assetsPath('hit.wav'), this.scene, null, { loop: false, autoplay: false }),
+      win: new Sound('win', assetsPath('win.wav'), this.scene, null, { loop: false, autoplay: false }),
     }
 
   }
