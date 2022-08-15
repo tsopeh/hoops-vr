@@ -20,18 +20,20 @@ const myScenes = {
   createHoopsScene,
 }
 
-const scenePromise = myScenes.createHoopsScene({
-  engine,
-  physicsPlugin: await getPhysicsPlugin(PhysicsEngine.CANNON),
-  canvas,
-})
-
-engine.runRenderLoop(function () {
-  scenePromise.then((scene) => {
-    scene.render()
+getPhysicsPlugin(PhysicsEngine.CANNON)
+  .then(physicsPlugin => {
+    return myScenes.createHoopsScene({
+      engine,
+      physicsPlugin,
+      canvas,
+    })
+  })
+  .then(scene => {
+    engine.runRenderLoop(function () {
+      scene.render()
+    })
     scene.debugLayer.show()
   })
-})
 
 window.addEventListener('resize', function () {
   engine.resize()
