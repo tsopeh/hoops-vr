@@ -42,7 +42,7 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
   const skybox = MeshBuilder.CreateBox('skyBox', { size: 1000.0 }, scene)
   const skyboxMaterial = new StandardMaterial('skyBox', scene)
   skyboxMaterial.backFaceCulling = false
-  skyboxMaterial.reflectionTexture = new CubeTexture('assets/skybox', scene)
+  skyboxMaterial.reflectionTexture = new CubeTexture('/assets/skybox', scene)
   skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE
   skyboxMaterial.diffuseColor = new Color3(0, 0, 0)
   skyboxMaterial.specularColor = new Color3(0, 0, 0)
@@ -54,17 +54,17 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
   terrainMaterial.specularPower = 64
 
   // Set the mix texture (represents the RGB values)
-  terrainMaterial.mixTexture = new Texture('assets/mixMap.png', scene)
+  terrainMaterial.mixTexture = new Texture('/assets/mixMap.png', scene)
 
   // Diffuse textures following the RGB values of the mix map
-  terrainMaterial.diffuseTexture1 = new Texture('assets/floor.png', scene) // Red
-  terrainMaterial.diffuseTexture2 = new Texture('assets/rock.png', scene) // Green
-  terrainMaterial.diffuseTexture3 = new Texture('assets/grass.png', scene) // Blue
+  terrainMaterial.diffuseTexture1 = new Texture('/assets/floor.png', scene) // Red
+  terrainMaterial.diffuseTexture2 = new Texture('/assets/rock.png', scene) // Green
+  terrainMaterial.diffuseTexture3 = new Texture('/assets/grass.png', scene) // Blue
 
   // Bump textures according to the previously set diffuse textures
-  terrainMaterial.bumpTexture1 = new Texture('assets/floor_bump.png', scene)
-  terrainMaterial.bumpTexture2 = new Texture('assets/rockn.png', scene)
-  terrainMaterial.bumpTexture3 = new Texture('assets/grassn.png', scene)
+  terrainMaterial.bumpTexture1 = new Texture('/assets/floor_bump.png', scene)
+  terrainMaterial.bumpTexture2 = new Texture('/assets/rockn.png', scene)
+  terrainMaterial.bumpTexture3 = new Texture('/assets/grassn.png', scene)
 
   // Rescale textures according to the terrain
   terrainMaterial.diffuseTexture1.uScale = terrainMaterial.diffuseTexture1.vScale = 10
@@ -72,7 +72,7 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
   terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = 10
 
   // Ground
-  const terrain = MeshBuilder.CreateGroundFromHeightMap('terrain', 'assets/heightMap.png', {
+  const terrain = MeshBuilder.CreateGroundFromHeightMap('terrain', '/assets/heightMap.png', {
     width: 100,
     height: 100,
     subdivisions: 100,
