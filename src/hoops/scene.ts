@@ -8,11 +8,12 @@ import {
   Ray,
   Scene,
   StandardMaterial,
+  Texture,
   Tools,
   Vector3,
   WebXRFeatureName,
 } from '@babylonjs/core'
-import { GridMaterial } from '@babylonjs/materials'
+import { GridMaterial, TerrainMaterial } from '@babylonjs/materials'
 import { SceneParams } from '../scene'
 import { Course } from './course'
 
@@ -36,9 +37,46 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
   const environment = scene.createDefaultEnvironment({ createGround: false, skyboxSize: 10000 })
   environment!.setMainColor(Color3.FromHexString('#74b9ff'))
 
-  const ground = MeshBuilder.CreateGround('ground', { width: 50, height: 1000 }, scene)
-  ground.physicsImpostor = new PhysicsImpostor(
-    ground,
+  // Create terrain material
+  const terrainMaterial = new TerrainMaterial('terrainMaterial', scene)
+  terrainMaterial.specularColor = new Color3(0.5, 0.5, 0.5)
+  terrainMaterial.specularPower = 64
+
+  // Set the mix texture (represents the RGB values)
+  terrainMaterial.mixTexture = new Texture('assets/mixMap.png', scene)
+
+  // Diffuse textures following the RGB values of the mix map
+  terrainMaterial.diffuseTexture1 = new Texture('assets/floor.png', scene) // Red
+  terrainMaterial.diffuseTexture2 = new Texture('assets/rock.png', scene) // Green
+  terrainMaterial.diffuseTexture3 = new Texture('assets/grass.png', scene) // Blue
+
+  // Bump textures according to the previously set diffuse textures
+  terrainMaterial.bumpTexture1 = new Texture('assets/floor_bump.png', scene)
+  terrainMaterial.bumpTexture2 = new Texture('assets/rockn.png', scene)
+  terrainMaterial.bumpTexture3 = new Texture('assets/grassn.png', scene)
+
+  // Rescale textures according to the terrain
+  terrainMaterial.diffuseTexture1.uScale = terrainMaterial.diffuseTexture1.vScale = 10
+  terrainMaterial.diffuseTexture2.uScale = terrainMaterial.diffuseTexture2.vScale = 10
+  terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = 10
+
+  // Ground
+  const terrain = MeshBuilder.CreateGroundFromHeightMap('terrain', 'assets/heightMap.png', {
+    width: 100,
+    height: 100,
+    subdivisions: 100,
+    minHeight: 0,
+    maxHeight: 20,
+    updatable: false,
+  }, scene)
+  terrain.position.set(-300, -20, 500)
+  terrain.rotation.set(0, Tools.ToRadians(300), 0)
+  terrain.scaling.set(15, 15, 15)
+  terrain.material = terrainMaterial
+
+  const runway = MeshBuilder.CreateGround('runway', { width: 50, height: 1000 }, scene)
+  runway.physicsImpostor = new PhysicsImpostor(
+    runway,
     PhysicsImpostor.BoxImpostor, {
       mass: 0,
       restitution: 0.7,
@@ -46,8 +84,8 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
     },
     scene,
   )
-  ground.position.z = 475
-  ground.material = new GridMaterial('mat', scene)
+  runway.position.z = 475
+  runway.material = new GridMaterial('mat', scene)
 
   const walkableGround = MeshBuilder.CreateGround('walkable-ground', { width: 25, height: 25 }, scene)
   walkableGround.physicsImpostor = new PhysicsImpostor(
@@ -58,7 +96,7 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
     },
     scene,
   )
-  walkableGround.position.y = 0.001
+  walkableGround.position.y = 0.005
   walkableGround.material = (() => {
     const mat = new StandardMaterial('walkable-ground-mat', scene)
     mat.diffuseColor = new Color3(0, 1, 0)
@@ -67,15 +105,15 @@ export const createHoopsScene = async (params: SceneParams): Promise<Scene> => {
   })()
 
   // snap points
-  const snapPoint1 = MeshBuilder.CreateBox('snapPoint1', { height: 0.01, width: 1, depth: 1 })
+  const snapPoint1 = MeshBuilder.CreateBox('snapPoint1', { height: 0.03, width: 1, depth: 1 })
   snapPoint1.position.x = 0
   snapPoint1.position.z = 10
 
-  const snapPoint2 = MeshBuilder.CreateBox('snapPoint2', { height: 0.01, width: 1, depth: 1 })
+  const snapPoint2 = MeshBuilder.CreateBox('snapPoint2', { height: 0.03, width: 1, depth: 1 })
   snapPoint2.position.x = 5
   snapPoint2.position.z = 5
 
-  const snapPoint3 = MeshBuilder.CreateBox('snapPoint3', { height: 0.01, width: 1, depth: 1 })
+  const snapPoint3 = MeshBuilder.CreateBox('snapPoint3', { height: 0.03, width: 1, depth: 1 })
   snapPoint3.position.x = -5
   snapPoint3.position.z = 5
 
