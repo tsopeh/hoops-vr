@@ -1,5 +1,9 @@
 # Hoops VR
 
+## Demo
+
+You can run [the demo](https://tsopeh.github.io/hoops-vr/) of our game using the Oculus Browser.
+
 ## Development
 
 ### Prerequisites
